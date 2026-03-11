@@ -25,6 +25,5 @@ RUN npm install -g serve
 # Copy built assets from build stage
 COPY --from=build /app/dist ./dist
 
-EXPOSE 3000
-
-CMD ["serve", "-s", "dist", "-l", "3000"]
+# Railway assigns PORT dynamically
+CMD ["sh", "-c", "serve -s dist -l ${PORT:-3000}"]
