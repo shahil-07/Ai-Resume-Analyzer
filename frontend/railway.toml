@@ -1,5 +1,7 @@
 [build]
-builder = "nixpacks"
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "npx serve dist -s -l $PORT"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
