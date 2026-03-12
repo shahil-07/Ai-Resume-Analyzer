@@ -9,6 +9,10 @@ import SuggestionsPanel from '../components/SuggestionsPanel'
 import ResultSummary from '../components/ResultSummary'
 
 const Analyzer = () => {
+  const apiBaseUrl = import.meta.env.VITE_API_URL || '/api'
+  const normalizedApiBaseUrl = apiBaseUrl.endsWith('/api') || apiBaseUrl.endsWith('/api/')
+    ? apiBaseUrl.replace(/\/$/, '')
+    : `${apiBaseUrl.replace(/\/$/, '')}/api`
   const [file, setFile] = useState(null)
   const [jobDescription, setJobDescription] = useState('')
   const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -43,7 +47,7 @@ const Analyzer = () => {
         })
       }, 200)
 
-      const response = await fetch('/api/analyze-resume', {
+      const response = await fetch(`${normalizedApiBaseUrl}/analyze-resume`, {
         method: 'POST',
         body: formData
       })
@@ -51,8 +55,20 @@ const Analyzer = () => {
       clearInterval(progressInterval)
       setUploadProgress(100)
 
+      const contentType = response.headers.get('content-type') || ''
+      const isJson = contentType.includes('application/json')
+
       if (!response.ok) {
-        throw new Error('Analysis failed. Please try again.')
+        if (isJson) {
+          const errorData = await response.json()
+          throw new Error(errorData?.error || 'Analysis failed. Please try again.')
+        }
+        const errorText = await response.text()
+        throw new Error(errorText || 'Analysis failed. Please try again.')
+      }
+
+      if (!isJson) {
+        throw new Error('Unexpected response format. Please try again.')
       }
 
       const data = await response.json()
