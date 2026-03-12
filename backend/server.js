@@ -27,7 +27,19 @@ const analysisLimiter = rateLimit({
 });
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'https://ai-resume-analyz.up.railway.app',
+    'https://ai-resume-analyzer-fro.up.railway.app',
+    process.env.FRONTEND_URL
+  ].filter(Boolean),
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/api', apiLimiter);
 
