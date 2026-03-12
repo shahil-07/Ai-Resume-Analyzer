@@ -9,7 +9,8 @@ import SuggestionsPanel from '../components/SuggestionsPanel'
 import ResultSummary from '../components/ResultSummary'
 
 const Analyzer = () => {
-  const apiBaseUrl = import.meta.env.VITE_API_URL || '/api'
+  const apiBaseUrl = import.meta.env.VITE_API_URL
+    || (import.meta.env.DEV ? '/api' : 'https://ai-resume-analyzer-backend.onrender.com')
   const normalizedApiBaseUrl = apiBaseUrl.endsWith('/api') || apiBaseUrl.endsWith('/api/')
     ? apiBaseUrl.replace(/\/$/, '')
     : `${apiBaseUrl.replace(/\/$/, '')}/api`
